@@ -1,11 +1,12 @@
 # @deepseek-ai/dsh-memory-connect
 
-> Cross-session memory plugin for DeepSeek Harness (DSH)  
-> 跨会话记忆插件 — 让 AI Agent 拥有持久记忆
+> 跨会话记忆插件 — 让 AI Agent 拥有持久记忆  
+> Cross-session memory plugin for DeepSeek Harness (DSH)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-≥18-green.svg)](https://nodejs.org)
 [![DSH](https://img.shields.io/badge/DSH-Compatible-brightgreen.svg)](https://github.com/deepseek-ai/dsh)
+[![Version](https://img.shields.io/badge/version-0.2.0-orange.svg)](https://github.com/Asher-2000/dsh-memory-connect/releases)
 
 ---
 
@@ -13,7 +14,7 @@
 
 ## Overview
 
-`dsh-memory-connect` is a cross-session memory sharing plugin for [DeepSeek Harness](https://github.com/deepseek-ai/dsh). It automatically extracts, stores, and recalls memories across sessions, giving your AI agent persistent, intelligent memory.
+`dsh-memory-connect` is a cross-session memory sharing plugin for [DeepSeek Harness](https://github.com/deepseek-ai/dsh). It automatically extracts, stores, and recalls memories across sessions, giving your AI agent persistent, intelligent memory with **context explosion prevention**.
 
 **Zero-config** — works out of the box with SQLite FTS5 and DSH's built-in LLM.
 
@@ -23,43 +24,53 @@
 |---------|-------------|
 | 🔍 **Auto Extraction** | Extracts facts, preferences, decisions, and context from conversations |
 | 🧠 **Semantic Recall** | RRF (Reciprocal Rank Fusion) combines keyword and semantic search |
+| 🛡️ **Context Explosion Prevention** | Token budget management prevents context window overflow |
 | ⏰ **Scheduled Maintenance** | Automatic periodic decay and consolidation via built-in scheduler |
-| 🤖 **LLM Consolidation** | Automatic intelligent memory merging using DSH's built-in `ctx.llm` |
+| 🤖 **LLM Consolidation** | Intelligent memory merging using DSH's built-in `ctx.llm` (zero-config) |
 | 📉 **Memory Decay** | Old, unused memories naturally fade; frequently accessed ones persist |
-| 🔧 **Zero Config** | Works with SQLite FTS5, no additional dependencies needed |
+| 🎯 **Smart Prioritization** | Memory selection based on relevance × recency × frequency |
+| 🗜️ **Memory Compression** | Automatic compression when approaching token limits |
 
 ## Architecture
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│                    Memory Plugin Data Flow                        │
-├──────────────────────────────────────────────────────────────────┤
-│                                                                   │
-│  ┌──────────┐    session/event    ┌──────────────────┐           │
-│  │ Session  │ ──────────────────→ │ MemoryExtractor  │           │
-│  │ Engine   │                     │ (Rule-based)     │           │
-│  └──────────┘                     └────────┬─────────┘           │
-│                                            │                     │
-│                                            ▼                     │
-│                                   ┌──────────────────┐           │
-│                                   │  SQLite FTS5     │           │
-│                                   │  memories        │           │
-│                                   │  + memory_fts    │           │
-│                                   └────────┬─────────┘           │
-│                                            │                     │
-│  ┌──────────┐   session/created   ┌────────▼─────────┐           │
-│  │ New      │ ←────────────────── │ ContextInjector  │           │
-│  │ Session  │                     │ (FTS5 + RRF)     │           │
-│  └──────────┘                     └──────────────────┘           │
-│                                                                   │
-│  ┌──────────────────────┐  ┌─────────────────────┐              │
-│  │   MemoryScheduler    │  │ SemanticConsolidator │              │
-│  │  (setInterval)       │→ │ (Tag+Word+Temporal)  │              │
-│  │  • Decay (1h)        │  │ + ctx.llm merge     │              │
-│  │  • Consolidate (6h)  │  └─────────────────────┘              │
-│  └──────────────────────┘                                        │
-│                                                                   │
-└──────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────┐
+│                    Memory Plugin Data Flow                                │
+├──────────────────────────────────────────────────────────────────────────┤
+│                                                                           │
+│  ┌──────────┐    session/event    ┌──────────────────┐                   │
+│  │ Session  │ ──────────────────→ │ MemoryExtractor  │                   │
+│  │ Engine   │                     │ (Rule-based)     │                   │
+│  └──────────┘                     └────────┬─────────┘                   │
+│                                            │                             │
+│                                            ▼                             │
+│                                   ┌──────────────────┐                   │
+│                                   │  SQLite FTS5     │                   │
+│                                   │  memories        │                   │
+│                                   │  + memory_fts    │                   │
+│                                   └────────┬─────────┘                   │
+│                                            │                             │
+│  ┌──────────┐   session/created   ┌────────▼─────────┐                   │
+│  │ New      │ ←────────────────── │ ContextInjector  │                   │
+│  │ Session  │                     │ (Token Budget)   │                   │
+│  └──────────┘                     └──────────────────┘                   │
+│                                                                           │
+│  ┌──────────────────────┐  ┌─────────────────────┐                      │
+│  │   MemoryScheduler    │  │ SemanticConsolidator │                      │
+│  │  (setInterval)       │→ │ (Tag+Word+Temporal)  │                      │
+│  │  • Decay (1h)        │  │ + ctx.llm merge     │                      │
+│  │  • Consolidate (6h)  │  └─────────────────────┘                      │
+│  └──────────────────────┘                                                │
+│                                                                           │
+│  ┌────────────────────────────────────────────────────────────────────┐  │
+│  │                    Context Explosion Prevention                     │  │
+│  │  • TokenCounter: Estimate tokens (EN/CN/Mixed)                     │  │
+│  │  • Smart Prioritization: Relevance × Recency × Frequency           │  │
+│  │  • Budget Management: maxContextTokens limit                        │  │
+│  │  • Memory Compression: Auto-truncate when approaching limits       │  │
+│  └────────────────────────────────────────────────────────────────────┘  │
+│                                                                           │
+└──────────────────────────────────────────────────────────────────────────┘
 ```
 
 ## Installation
@@ -80,6 +91,8 @@ Add to your DSH composition:
 
 ## Configuration
 
+### Basic Options
+
 | Option | Default | Description |
 |--------|---------|-------------|
 | `path` | *(required)* | Path to SQLite memory database |
@@ -88,10 +101,23 @@ Add to your DSH composition:
 | `decayRate` | `0.02` | Decay constant (higher = faster decay) |
 | `minRelevanceThreshold` | `0.3` | Min relevance score for recall |
 | `journalMode` | `wal` | SQLite journal mode |
+
+### Scheduler Options
+
+| Option | Default | Description |
+|--------|---------|-------------|
 | `schedulerEnabled` | `true` | Enable periodic maintenance |
 | `schedulerDecayIntervalMs` | `3600000` | Decay interval (ms), default 1h |
 | `schedulerConsolidateIntervalMs` | `21600000` | Consolidation interval (ms), default 6h |
-| `similarityThreshold` | `0.5` | Semantic similarity threshold (0-1) |
+
+### Context Explosion Prevention Options
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `maxContextTokens` | `4000` | Max tokens for memory context injection |
+| `reservedTokens` | `8000` | Tokens reserved for other context |
+| `smartPrioritization` | `true` | Enable smart memory prioritization |
+| `enableCompression` | `true` | Enable memory compression |
 
 Full configuration example:
 
@@ -108,6 +134,10 @@ Full configuration example:
     schedulerDecayIntervalMs: 3600000
     schedulerConsolidateIntervalMs: 21600000
     similarityThreshold: 0.5
+    maxContextTokens: 4000
+    reservedTokens: 8000
+    smartPrioritization: true
+    enableCompression: true
 ```
 
 ## API
@@ -170,6 +200,43 @@ const log = await ctx.crossSessionMemory.getConsolidationLog(10)
 const stats = await ctx.crossSessionMemory.getStats()
 ```
 
+## Context Explosion Prevention
+
+### How It Works
+
+1. **Token Counting** — Estimates tokens for English (1 token ≈ 4 chars), Chinese (1 token ≈ 2 chars), and mixed text
+2. **Smart Prioritization** — Ranks memories by: `relevance × 50% + recency × 30% + frequency × 20%`
+3. **Budget Management** — Enforces `maxContextTokens` limit (default: 4000)
+4. **Memory Compression** — Automatically truncates or summarizes when approaching limits
+
+### Output Example
+
+```markdown
+## Related Memories from Previous Sessions
+
+- [preference] User prefers TypeScript
+- [decision] Chose PostgreSQL over MySQL
+- [fact] Project uses React 18
+
+> 💾 Memory: 3/10 memories | 150/4000 tokens
+```
+
+### Token Budget Flow
+
+```
+Recall memories (up to maxRecallCount)
+    ↓
+Smart prioritization (relevance × recency × frequency)
+    ↓
+Token budget check
+    ├── Under limit → Add directly
+    └── Over limit → Compress then add
+    ↓
+Generate context with budget info
+    ↓
+Inject into session
+```
+
 ## Memory Types
 
 | Type | Description | Example |
@@ -218,7 +285,7 @@ MIT
 
 ## 概述
 
-`dsh-memory-connect` 是 [DeepSeek Harness](https://github.com/deepseek-ai/dsh) 的跨会话记忆共享插件。它自动从对话中提取、存储和检索记忆，让 AI Agent 拥有持久化的智能记忆能力。
+`dsh-memory-connect` 是 [DeepSeek Harness](https://github.com/deepseek-ai/dsh) 的跨会话记忆共享插件。它自动从对话中提取、存储和检索记忆，让 AI Agent 拥有持久化的智能记忆能力，并**防止上下文爆炸**。
 
 **零配置** — 基于 SQLite FTS5 和 DSH 内置 LLM，开箱即用。
 
@@ -228,18 +295,33 @@ MIT
 |------|------|
 | 🔍 **自动提取** | 从对话中提取事实、偏好、决策和上下文 |
 | 🧠 **语义召回** | RRF 融合关键词和语义搜索 |
+| 🛡️ **上下文爆炸防护** | Token 预算管理，防止上下文窗口溢出 |
 | ⏰ **定时维护** | 内置调度器自动执行衰减和整合 |
 | 🤖 **LLM 整合** | 使用 DSH 内置 LLM 智能合并相似记忆 |
 | 📉 **记忆衰减** | 旧的、不常用的记忆自然消退 |
-| 🔧 **零配置** | 基于 SQLite FTS5，无需额外依赖 |
+| 🎯 **智能优先级** | 基于相关性 × 时间 × 频率的记忆排序 |
+| 🗜️ **记忆压缩** | 接近 token 限制时自动压缩 |
 
-## 工作原理
+## 上下文爆炸防护
 
-1. **监听** — 订阅 `session/event` 事件，实时捕获对话信息
-2. **提取** — 基于规则的模式匹配，识别事实、偏好、决策等
-3. **存储** — 写入 SQLite 数据库，建立 FTS5 全文索引
-4. **召回** — 新会话创建时，自动检索相关历史记忆并注入
-5. **维护** — 定期衰减旧记忆、整合重复记忆
+### 工作原理
+
+1. **Token 计数** — 估算中英文混合文本的 token 数
+2. **智能优先级** — 按 `相关性 × 50% + 时间衰减 × 30% + 访问频率 × 20%` 排序
+3. **预算管理** — 强制执行 `maxContextTokens` 限制（默认 4000）
+4. **记忆压缩** — 接近限制时自动截断或摘要
+
+### 输出示例
+
+```markdown
+## 来自之前会话的相关记忆
+
+- [偏好] 用户偏好 TypeScript
+- [决策] 选择 PostgreSQL 而非 MySQL
+- [事实] 项目使用 React 18
+
+> 💾 记忆: 3/10 条 | 150/4000 tokens
+```
 
 ## 快速开始
 
@@ -255,6 +337,20 @@ npm install @deepseek-ai/dsh-memory-connect
   name: '@deepseek-ai/dsh-memory-connect'
   config:
     path: ~/.dsh/memory.db
+```
+
+## 配置示例
+
+```yaml
+- id: memory
+  name: '@deepseek-ai/dsh-memory-connect'
+  config:
+    path: ~/.dsh/memory.db
+    maxRecallCount: 10
+    maxContextTokens: 4000
+    smartPrioritization: true
+    enableCompression: true
+    schedulerEnabled: true
 ```
 
 ## API 示例
@@ -279,11 +375,3 @@ const stats = await ctx.crossSessionMemory.getStats()
 ## 许可证
 
 MIT
-
-
-## Roadmap
-
-- [ ] Add embedding-based semantic search
-- [ ] Support for multi-user memory isolation
-- [ ] Web UI for memory management
-- [ ] Memory export/import functionality
