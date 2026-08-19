@@ -1,7 +1,7 @@
 {
   "name": "@deepseek-ai/dsh-memory-connect",
-  "description": "Cross-session memory plugin for DSH — auto-extraction, semantic recall, scheduled maintenance, LLM-powered consolidation",
-  "version": "0.1.0",
+  "description": "Cross-session memory plugin for DSH — auto-extraction, semantic recall, scheduled maintenance, LLM-powered consolidation, context explosion prevention",
+  "version": "0.2.0",
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",
