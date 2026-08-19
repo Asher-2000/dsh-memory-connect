@@ -1,0 +1,18 @@
+# Tests
+test*.js
+
+# Development
+.devcontainer/
+.github/
+.vscode/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Database
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
