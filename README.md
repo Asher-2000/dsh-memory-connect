@@ -279,3 +279,11 @@ const stats = await ctx.crossSessionMemory.getStats()
 ## 许可证
 
 MIT
+
+
+## Roadmap
+
+- [ ] Add embedding-based semantic search
+- [ ] Support for multi-user memory isolation
+- [ ] Web UI for memory management
+- [ ] Memory export/import functionality
