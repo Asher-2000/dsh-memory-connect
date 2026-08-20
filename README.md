@@ -29,6 +29,7 @@
 | 🤖 **LLM Consolidation** | Intelligent memory merging using DSH's built-in `ctx.llm` (zero-config) |
 | 📉 **Memory Decay** | Old, unused memories naturally fade; frequently accessed ones persist |
 | 🎯 **Smart Prioritization** | Memory selection based on relevance × recency × frequency |
+| 🧠 **Global Soul** | Persistent identity across all workspaces via ~/.dsh/soul.md |
 | 🗜️ **Memory Compression** | Automatic compression when approaching token limits |
 
 ## Architecture
@@ -237,6 +238,51 @@ Generate context with budget info
 Inject into session
 ```
 
+
+## 🧠 Global Soul (Identity)
+
+The Soul feature provides a **persistent identity** that follows you across all workspaces.
+
+### How it works
+
+1. Create `~/.dsh/soul.md` with your identity information
+2. The plugin automatically loads and injects it into every session
+3. Your preferences, tech stack, and coding style are always available
+
+### Example Soul file
+
+```markdown
+# 🧠 Soul — Global Identity
+
+## 👤 Identity
+- GitHub: Asher-2000
+- Role: DSH Plugin Developer
+
+## 💻 Tech Stack
+- TypeScript, React, Node.js, DSH/Cordis
+
+## 🎨 Coding Style
+- Functional programming
+- ES Modules
+- Zero-config preferred
+
+## ⚠️ Preferences
+- No class components
+- No redundant comments
+```
+
+### Configuration
+
+```yaml
+- id: memory
+  name: '@deepseek-ai/dsh-memory-connect'
+  config:
+    path: ~/.dsh/memory.db
+    enableSoul: true  # Enable Soul injection (default: true)
+```
+
+---
+
 ## Memory Types
 
 | Type | Description | Example |
@@ -375,3 +421,4 @@ const stats = await ctx.crossSessionMemory.getStats()
 ## 许可证
 
 MIT
+
