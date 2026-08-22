@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-≥18-green.svg)](https://nodejs.org)
 [![DSH](https://img.shields.io/badge/DSH-Compatible-brightgreen.svg)](https://github.com/deepseek-ai/dsh)
-[![Version](https://img.shields.io/badge/version-0.3.0-orange.svg)](https://github.com/Asher-2000/dsh-memory-connect/releases)
+[![Version](https://img.shields.io/badge/version-0.4.0-orange.svg)](https://github.com/Asher-2000/dsh-memory-connect/releases)
 
 ---
 
@@ -18,13 +18,21 @@
 
 **Zero-config** — works out of the box with SQLite FTS5 and DSH's built-in LLM.
 
+> ### 🚨 v0.4.0 — The "it actually works now" release
+>
+> v0.3.0 registered the service but **never instantiated it** (Cordis lazily constructs services — passing the class to `ctx.provide()` means the constructor never runs), and the "recall" feature wrote a computed context to a field **no one ever read**. In practice the plugin did nothing.
+>
+> v0.4.0 fixes the activation chain and **wires recall into the system prompt**: a `systemPrompt.context` provider injects `## Related Memories from Previous Sessions` on every turn. Verified end-to-end on dsh v0.1.1-rc.2 / Node 24: tell session A "my cat is named Mimi", start a fresh session B and ask — the model answers correctly from memory.
+>
+> See [CHANGELOG.md](CHANGELOG.md) for the full breakdown.
+
 ## Features
 
 | Feature | Description |
 |---------|-------------|
 | 🧠 **Global Soul** | Persistent identity across all workspaces via ~/.dsh/soul.md |
 | 🔍 **Auto Extraction** | Extracts facts, preferences, decisions, and context from conversations |
-| 🧠 **Semantic Recall** | RRF (Reciprocal Rank Fusion) combines keyword and semantic search |
+| 🧠 **Cross-Session Recall** | FTS5 keyword recall injected into the system prompt **every turn** (recency fallback when no query text is available) |
 | 🛡️ **Context Explosion Prevention** | Token budget management prevents context window overflow |
 | ⏰ **Scheduled Maintenance** | Automatic periodic decay and consolidation via built-in scheduler |
 | 🤖 **LLM Consolidation** | Intelligent memory merging using DSH's built-in `ctx.llm` (zero-config) |
@@ -80,6 +88,8 @@ Add to your DSH composition:
     path: ~/.dsh/memory.db
     enableSoul: true  # Enable Soul injection (default: true)
 ```
+
+> **v0.4.0 requirement**: the plugin now injects `systemPrompt` (used for the cross-session recall context provider). Any profile that loads this plugin needs the `systemPrompt` service available (standard in the dsh web/headless profiles).
 
 ## Configuration
 
@@ -154,6 +164,22 @@ const memories = await ctx.crossSessionMemory.recallForSession(
   'Setting up a new React project',
   10
 )
+```
+
+### Synchronous Recall (for system-prompt providers)
+
+```javascript
+// v0.4.0+ — sync API for prompt-context providers (node:sqlite is synchronous,
+// so no async needed). Returns a formatted markdown block or ''.
+const block = ctx.crossSessionMemory.recallSync('session-123', 'React project')
+```
+
+### Latest User Text (from dsh session logs)
+
+```javascript
+// v0.4.0+ — extracts the most recent user message text from a dsh Session
+// (handles {event: ...} wrappers, agent/inbox/spliced, and bare events).
+const query = ctx.crossSessionMemory.currentUserText(agent.session)
 ```
 
 ### Store Memory
@@ -237,13 +263,21 @@ MIT
 
 **零配置** — 基于 SQLite FTS5 和 DSH 内置 LLM，开箱即用。
 
+> ### 🚨 v0.4.0 — "这次真的能跑"版本
+>
+> v0.3.0 只注册了服务但**从未实例化**（Cordis 懒加载机制：把类传给 `ctx.provide()` 导致构造函数永远不执行），且"召回"功能把计算好的上下文写进了一个**无人读取**的字段——实际运行中插件什么都不做。
+>
+> v0.4.0 修复了启动链路，并**把召回真正接入了系统提示词**：通过 `systemPrompt.context` 提供者，每轮对话都注入 `## Related Memories from Previous Sessions`。已在 dsh v0.1.1-rc.2 / Node 24 上端到端验证：会话 A 说"我的猫叫咪咪"，开新会话 B 问它，模型能正确从记忆中回答。
+>
+> 详见 [CHANGELOG.md](CHANGELOG.md)。
+
 ## 核心功能
 
 | 功能 | 说明 |
 |------|------|
 | 🧠 **全局身份 (Soul)** | 通过 ~/.dsh/soul.md 跨所有工作区持久化身份 |
 | 🔍 **自动提取** | 从对话中提取事实、偏好、决策和上下文 |
-| 🧠 **语义召回** | RRF 融合关键词和语义搜索 |
+| 🧠 **跨会话召回** | FTS5 关键词召回，**每轮**注入系统提示词（无查询文本时按最近记忆兜底） |
 | 🛡️ **上下文爆炸防护** | Token 预算管理，防止上下文窗口溢出 |
 | ⏰ **定时维护** | 内置调度器自动执行衰减和整合 |
 | 🤖 **LLM 整合** | 使用 DSH 内置 LLM 智能合并相似记忆 |
@@ -299,6 +333,8 @@ npm install @deepseek-ai/dsh-memory-connect
     path: ~/.dsh/memory.db
     enableSoul: true
 ```
+
+> **v0.4.0 依赖**：插件现在注入 `systemPrompt` 服务（用于跨会话召回 context 提供者）。所在 profile 需要提供 `systemPrompt`（dsh web/headless profile 默认都有）。
 
 ## 许可证
 
