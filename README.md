@@ -74,8 +74,19 @@ The Soul feature provides a **persistent identity** that follows you across all 
 
 ## Installation
 
+> ⚠️ **Not on npm yet** — install from GitHub (v0.4.0):
+
 ```bash
-npm install @deepseek-ai/dsh-memory-connect
+# 方式 A：dsh plugin add（推荐，自动装入 profile）
+dsh plugin --profile <你的profile> add github:Asher-2000/dsh-memory-connect
+
+# 方式 B：npm 直接装 git tag
+npm install github:Asher-2000/dsh-memory-connect#v0.4.0
+
+# 方式 C：本地源码 link（开发/调试用）
+git clone https://github.com/Asher-2000/dsh-memory-connect.git
+cd dsh-memory-connect
+dsh plugin --profile <你的profile> add link:/path/to/dsh-memory-connect
 ```
 
 Add to your DSH composition:
@@ -319,8 +330,18 @@ Soul 功能提供**跨所有工作区的持久化身份**。
 
 ## 快速开始
 
+> ⚠️ **尚未发布到 npm** — 从 GitHub 安装 (v0.4.0)：
+
 ```bash
-npm install @deepseek-ai/dsh-memory-connect
+# 方式 A：dsh plugin add（推荐，自动装入 profile）
+dsh plugin --profile <你的profile> add github:Asher-2000/dsh-memory-connect
+
+# 方式 B：npm 直接装 git tag
+npm install github:Asher-2000/dsh-memory-connect#v0.4.0
+
+# 方式 C：本地源码 link（开发/调试用）
+git clone https://github.com/Asher-2000/dsh-memory-connect.git
+dsh plugin --profile <你的profile> add link:/path/to/dsh-memory-connect
 ```
 
 添加到 DSH 配置：

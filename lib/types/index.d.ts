@@ -136,6 +136,12 @@ export class CrossSessionMemoryService extends Service {
   /** Recall memories relevant to a new session */
   recallForSession(sessionId: string, context: string, limit?: number): Promise<Memory[]>
 
+  /** Synchronous recall for system-prompt context providers (v0.4.0+) */
+  recallSync(sessionId: string, query: string, limit?: number): string
+
+  /** Extract the latest user message text from a dsh Session (v0.4.0+) */
+  currentUserText(session: any): string
+
   /** Store a memory explicitly */
   storeMemory(memory: Partial<Memory>): Promise<Memory>
 

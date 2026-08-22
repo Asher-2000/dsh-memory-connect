@@ -24,7 +24,8 @@
 ### Installation
 
 ```bash
-npm install @deepseek-ai/dsh-memory-connect
+npm install github:Asher-2000/dsh-memory-connect#v0.4.0
+# or: dsh plugin --profile <your-profile> add github:Asher-2000/dsh-memory-connect
 ```
 
 ### Configuration
