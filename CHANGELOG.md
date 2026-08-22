@@ -10,6 +10,7 @@
 - **Fix: Node 24 import crash** — `existsSync`/`readFileSync` were imported from `node:fs/promises` (sync APIs only exist in `node:fs`), crashing module load. Imports corrected.
 - **Fix: schemastery API incompatibility** — `z.string().optional()` was removed in the bundled schemastery; fields are optional by default. Removed the call.
 - **Fix: optional `ctx.llm` probe crash** — `optionalInject` is not a Cordis standard, direct `ctx.llm` access throws. Availability probe is now guarded.
+- **Fix: crash on zero-config install** — Cordis passes `undefined` as `config` when a bundle entry has no `config:` block. A bare `dsh plugin add` (no hand-written profile patch) crashed on `config.openAt`. `apply()` now normalizes `MEMORY_DEFAULTS` (DB at `~/.dsh/memory.db`, `openAt: startup`, and every documented default) before constructing the service — the plugin now runs with **zero configuration**.
 
 ### ✨ New Features
 
