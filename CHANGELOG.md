@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.4.1 (2026-08-25)
+
+### 🐛 Bug Fix
+
+- **Fix: Soul never injected in practice** — the per-turn context provider (`recallSync`) only queried the FTS5 memory table and never called `SoulManager.getContext()`. `enableSoul: true` (the default) and the README's "zero-config Soul" instructions did nothing on every-turn injection. `recallSync` now loads and injects Soul context the same way `getMemoryContext` does: Soul is placed first, and is still injected even when there are no memory rows (previously empty recall returned `''`). Reported in [issue #1](https://github.com/Asher-2000/dsh-memory-connect/issues/1).
+
 ## v0.4.0 (2026-08-22)
 
 ### 🐛 Critical Bug Fixes
