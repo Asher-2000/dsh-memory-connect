@@ -1,7 +1,7 @@
 {
   "name": "@asherliner/dsh-memory-connect",
   "description": "Cross-session memory plugin for DSH — auto-extraction, semantic recall, scheduled maintenance, LLM-powered consolidation, context explosion prevention, global Soul identity",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",
@@ -13,9 +13,14 @@
     "./package.json": "./package.json"
   },
   "files": [
+    "index.js",
+    "cordis.patch.yml",
     "lib/index.js",
     "lib/types/**/*.d.ts",
-    "cordis.patch.yml"
+    "scripts/embed_server.py",
+    "README.md",
+    "README.zh.md",
+    "LICENSE"
   ],
   "license": "MIT",
   "keywords": [

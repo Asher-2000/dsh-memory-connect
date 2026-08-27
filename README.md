@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-≥18-green.svg)](https://nodejs.org)
 [![DSH](https://img.shields.io/badge/DSH-Compatible-brightgreen.svg)](https://github.com/deepseek-ai/dsh)
-[![Version](https://img.shields.io/badge/version-0.5.0-orange.svg)](https://github.com/Asher-2000/dsh-memory-connect/releases)
+[![Version](https://img.shields.io/badge/version-0.6.0-orange.svg)](https://github.com/Asher-2000/dsh-memory-connect/releases)
 
 ---
 
@@ -42,6 +42,7 @@
 | 🧭 **Temporal Context Graph** | Every memory carries `valid_from`/`valid_until`; corrections are **append-only** via `reviseMemory()` (soft-supersede + successor link), never destructive. History stays queryable; recall only sees current truth. |
 | 🛡️ **Trust Model** | Recalled history is injected as an **untrusted reference** (explicit warning; current instruction always wins) — prevents memory poisoning and prompt conflicts |
 | 📝 **Turn-End Summarization** | `turn/end` events auto-generate lightweight `summary` memories preserving the conversation arc |
+| 🔎 **Semantic Recall** | Optional local embedding (BGE-small-zh-v1.5) fuses with FTS5 via RRF — finds memories *by meaning* even with zero keyword overlap. Opt-in (`embeddingEnabled: true`). |
 
 ## 🧠 Global Soul (Identity)
 
@@ -139,6 +140,27 @@ Add to your DSH composition:
 |--------|---------|-------------|
 | `enableSoul` | `true` | Enable global Soul injection |
 | `soulPath` | `~/.dsh/soul.md` | Custom Soul file path |
+
+### Semantic Embedding Options (optional)
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `embeddingEnabled` | `false` | Enable semantic (vector) recall via local embedding server |
+| `embeddingUrl` | `http://127.0.0.1:8765` | Embedding server base URL |
+| `embeddingModel` | `BAAI/bge-small-zh-v1.5` | Model name (must match the server) |
+| `embeddingWeight` | `0.7` | RRF fusion weight for semantic results (0–1) |
+
+To use semantic recall, start the bundled embedding server first:
+
+```bash
+# one-time: install the Python model
+pip install sentence-transformers
+
+# start the server (keeps the model resident)
+python3 node_modules/@asherliner/dsh-memory-connect/scripts/embed_server.py --port 8765
+```
+
+Then enable it in the plugin config (`embeddingEnabled: true`). The plugin degrades gracefully to keyword-only recall if the server is unreachable.
 
 Full configuration example:
 

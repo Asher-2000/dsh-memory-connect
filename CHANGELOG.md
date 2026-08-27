@@ -1,5 +1,33 @@
 # Changelog
 
+## v0.6.0 (2026-08-27)
+
+### ✨ New Feature: Semantic Recall (语义召回)
+
+- **🔎 Local embedding-based semantic retrieval** — optional vector recall that finds memories *by meaning* even when they share no keywords with the query. Powered by a tiny local embedding HTTP server (`scripts/embed_server.py`, BGE-small-zh-v1.5, 512-dim) and a new `memory_embeddings` table (float32 BLOB). Schema version bumped to 3 (auto-migrated).
+- **🧬 RRF fusion with FTS** — `searchMemories()` now fuses keyword (FTS5) and semantic (cosine) rankings via reciprocal-rank fusion, so both exact matches and paraphrase matches surface.
+- **⚙️ Opt-in config** (default off, zero breakage for existing installs):
+  ```yaml
+  # dsh-memory-connect
+  embeddingEnabled: true
+  embeddingUrl: http://127.0.0.1:8765
+  embeddingModel: BAAI/bge-small-zh-v1.5
+  embeddingWeight: 0.7
+  ```
+- **🔌 Zero-dependency design** — embeddings are computed in a separate Python process (sentence-transformers); the Node plugin talks HTTP with a 60s failure backoff and degrades gracefully to FTS-only when the server is down. Store writes never block on embedding.
+- **🧹 Lifecycle cleanup** — superseded/archived memories have their embeddings removed so recall only sees active rows.
+
+### 🧪 Tests
+
+- Added `test-embedding.js` (6 assertions): server health, BLOB round-trip (512-dim float32), semantic top-1 for keyword-missing queries, supersede cleanup, active-only recall. All existing tests still pass.
+
+### 📦 Packaging
+
+- `scripts/embed_server.py` ships inside the npm package; start it with:
+  ```bash
+  python3 node_modules/@asherliner/dsh-memory-connect/scripts/embed_server.py --port 8765
+  ```
+
 ## v0.5.0 (2026-08-27)
 
 ### ✨ New Features (inspired by dsh-opencontext)
