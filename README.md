@@ -78,14 +78,14 @@ The Soul feature provides a **persistent identity** that follows you across all 
 
 ## Installation
 
-> ⚠️ **Not on npm yet** — install from GitHub (v0.4.0):
+> ✅ **Published on npm** — install from npm registry (v0.6.1):
 
 ```bash
 # 方式 A：dsh plugin add（推荐，自动装入 profile）
-dsh plugin --profile <你的profile> add github:Asher-2000/dsh-memory-connect
+dsh plugin --profile <你的profile> add @asherliner/dsh-memory-connect
 
-# 方式 B：npm 直接装 git tag
-npm install github:Asher-2000/dsh-memory-connect#v0.4.0
+# 方式 B：npm 直接安装
+npm install @asherliner/dsh-memory-connect
 
 # 方式 C：本地源码 link（开发/调试用）
 git clone https://github.com/Asher-2000/dsh-memory-connect.git
@@ -104,7 +104,7 @@ Add to your DSH composition:
     enableSoul: true  # Enable Soul injection (default: true)
 ```
 
-> **v0.4.0 requirement**: the plugin now injects `systemPrompt` (used for the cross-session recall context provider). Any profile that loads this plugin needs the `systemPrompt` service available (standard in the dsh web/headless profiles).
+> **Requirement**: the plugin injects `systemPrompt` (used for the cross-session recall context provider). Any profile that loads this plugin needs the `systemPrompt` service available (standard in the dsh web/headless profiles).
 
 ## Configuration
 
@@ -358,14 +358,14 @@ Soul 功能提供**跨所有工作区的持久化身份**。
 
 ## 快速开始
 
-> ⚠️ **尚未发布到 npm** — 从 GitHub 安装 (v0.4.0)：
+> ✅ **已发布到 npm** — 从 npm registry 安装 (v0.6.1)：
 
 ```bash
 # 方式 A：dsh plugin add（推荐，自动装入 profile）
-dsh plugin --profile <你的profile> add github:Asher-2000/dsh-memory-connect
+dsh plugin --profile <你的profile> add @asherliner/dsh-memory-connect
 
-# 方式 B：npm 直接装 git tag
-npm install github:Asher-2000/dsh-memory-connect#v0.4.0
+# 方式 B：npm 直接安装
+npm install @asherliner/dsh-memory-connect
 
 # 方式 C：本地源码 link（开发/调试用）
 git clone https://github.com/Asher-2000/dsh-memory-connect.git
@@ -383,7 +383,7 @@ dsh plugin --profile <你的profile> add link:/path/to/dsh-memory-connect
     enableSoul: true
 ```
 
-> **v0.4.0 依赖**：插件现在注入 `systemPrompt` 服务（用于跨会话召回 context 提供者）。所在 profile 需要提供 `systemPrompt`（dsh web/headless profile 默认都有）。
+> **依赖说明**：插件注入 `systemPrompt` 服务（用于跨会话召回 context 提供者）。所在 profile 需要提供 `systemPrompt`（dsh web/headless profile 默认都有）。
 
 ## 许可证
 
