@@ -1,3 +1,3 @@
 - insert:
     - id: cross-session-memory
-      name: '@deepseek-ai/dsh-memory-connect'
+      name: '@asherliner/dsh-memory-connect'

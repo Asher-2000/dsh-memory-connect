@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-memory-connect
+# @asherliner/dsh-memory-connect
 
 > 跨会话记忆插件 — 让 AI Agent 拥有持久记忆和全局身份  
 > Cross-session memory plugin for DeepSeek Harness (DSH)
@@ -97,7 +97,7 @@ Add to your DSH composition:
 ```yaml
 # agent.cordis.yml
 - id: memory
-  name: '@deepseek-ai/dsh-memory-connect'
+  name: '@asherliner/dsh-memory-connect'
   config:
     path: ~/.dsh/memory.db
     enableSoul: true  # Enable Soul injection (default: true)
@@ -144,7 +144,7 @@ Full configuration example:
 
 ```yaml
 - id: memory
-  name: '@deepseek-ai/dsh-memory-connect'
+  name: '@asherliner/dsh-memory-connect'
   config:
     path: ~/.dsh/memory.db
     openAt: startup
@@ -355,7 +355,7 @@ dsh plugin --profile <你的profile> add link:/path/to/dsh-memory-connect
 ```yaml
 # agent.cordis.yml
 - id: memory
-  name: '@deepseek-ai/dsh-memory-connect'
+  name: '@asherliner/dsh-memory-connect'
   config:
     path: ~/.dsh/memory.db
     enableSoul: true

@@ -1,9 +1,9 @@
 /**
- * @deepseek-ai/dsh-memory-connect
+ * @asherliner/dsh-memory-connect
  *
  * Cross-session memory sharing plugin type declarations.
  *
- * @module @deepseek-ai/dsh-memory-connect
+ * @module @asherliner/dsh-memory-connect
  */
 
 import { Context, Service } from '@deepseek-ai/cordis'

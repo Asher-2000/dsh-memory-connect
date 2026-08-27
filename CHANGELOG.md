@@ -51,7 +51,7 @@ npm install github:Asher-2000/dsh-memory-connect#v0.4.0
 
 ```yaml
 - id: memory
-  name: '@deepseek-ai/dsh-memory-connect'
+  name: '@asherliner/dsh-memory-connect'
   config:
     path: ~/.dsh/memory.db
 ```
@@ -75,13 +75,13 @@ Tested on dsh v0.1.1-rc.2 (Node 24): extraction → SQLite FTS5 → system-promp
 
 ### Installation
 ```bash
-npm install @deepseek-ai/dsh-memory-connect
+npm install @asherliner/dsh-memory-connect
 ```
 
 ### Configuration
 ```yaml
 - id: memory
-  name: '@deepseek-ai/dsh-memory-connect'
+  name: '@asherliner/dsh-memory-connect'
   config:
     path: ~/.dsh/memory.db
 ```
