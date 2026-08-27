@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.6.1 (2026-08-27)
+
+### 🐛 Bug Fix
+
+- **Fix: `~` in `path` config never expanded** — `resolve()` in Node does not expand a leading `~`, so `path: ~/.dsh/memory.db` silently failed to create/open the database (the plugin default `resolve(homedir(), ...)` worked, but any user override with `~` broke storage). `_open()` now expands a leading `~/` to the home directory before resolving. Discovered while wiring up the plugin on a fresh local DSH install.
+
 ## v0.6.0 (2026-08-27)
 
 ### ✨ New Feature: Semantic Recall (语义召回)

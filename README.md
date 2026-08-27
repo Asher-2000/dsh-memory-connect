@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-≥18-green.svg)](https://nodejs.org)
 [![DSH](https://img.shields.io/badge/DSH-Compatible-brightgreen.svg)](https://github.com/deepseek-ai/dsh)
-[![Version](https://img.shields.io/badge/version-0.6.0-orange.svg)](https://github.com/Asher-2000/dsh-memory-connect/releases)
+[![Version](https://img.shields.io/badge/version-0.6.1-orange.svg)](https://github.com/Asher-2000/dsh-memory-connect/releases)
 
 ---
 
