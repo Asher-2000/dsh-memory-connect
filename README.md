@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-≥18-green.svg)](https://nodejs.org)
 [![DSH](https://img.shields.io/badge/DSH-Compatible-brightgreen.svg)](https://github.com/deepseek-ai/dsh)
-[![Version](https://img.shields.io/badge/version-0.4.0-orange.svg)](https://github.com/Asher-2000/dsh-memory-connect/releases)
+[![Version](https://img.shields.io/badge/version-0.5.0-orange.svg)](https://github.com/Asher-2000/dsh-memory-connect/releases)
 
 ---
 
@@ -39,6 +39,9 @@
 | 📉 **Memory Decay** | Old, unused memories naturally fade; frequently accessed ones persist |
 | 🎯 **Smart Prioritization** | Memory selection based on relevance × recency × frequency |
 | 🗜️ **Memory Compression** | Automatic compression when approaching token limits |
+| 🧭 **Temporal Context Graph** | Every memory carries `valid_from`/`valid_until`; corrections are **append-only** via `reviseMemory()` (soft-supersede + successor link), never destructive. History stays queryable; recall only sees current truth. |
+| 🛡️ **Trust Model** | Recalled history is injected as an **untrusted reference** (explicit warning; current instruction always wins) — prevents memory poisoning and prompt conflicts |
+| 📝 **Turn-End Summarization** | `turn/end` events auto-generate lightweight `summary` memories preserving the conversation arc |
 
 ## 🧠 Global Soul (Identity)
 
@@ -295,6 +298,9 @@ MIT
 | 📉 **记忆衰减** | 旧的、不常用的记忆自然消退 |
 | 🎯 **智能优先级** | 基于相关性 × 时间 × 频率的记忆排序 |
 | 🗜️ **记忆压缩** | 接近 token 限制时自动压缩 |
+| 🧭 **时态上下文图谱** | 每条记忆带 `valid_from`/`valid_until`；修正通过 `reviseMemory()` **追加而非覆盖**（软废弃旧记忆 + 新记忆链接），历史可回溯，召回只见当前有效真相 |
+| 🛡️ **信任模型** | 召回的历史作为**不可信参考**注入（显式警告；当前指令绝对优先）— 防止记忆投毒和提示词冲突 |
+| 📝 **轮末自动摘要** | `turn/end` 事件自动生成轻量 `summary` 记忆，保留对话脉络 |
 
 ## 🧠 全局身份 (Soul)
 

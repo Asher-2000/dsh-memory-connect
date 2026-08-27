@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.5.0 (2026-08-27)
+
+### ✨ New Features (inspired by dsh-opencontext)
+
+- **🧠 Temporal Context Graph (时态图谱)** — memory rows now carry `valid_from` / `valid_until` / `supersedes`. Corrections are **append-only**: `reviseMemory()` soft-supersedes the old row (status=`superseded`, `valid_until`=now) and inserts a successor linked via `supersedes`. History stays queryable; recall only returns currently-valid rows (`valid_until IS NULL`). Schema version bumped to 2 with automatic migration (old rows backfilled `valid_from = created_at`).
+- **🛡️ Trust Model (信任模型)** — recalled history is injected as an **untrusted reference**: the block is labeled `untrusted reference` with an explicit warning that it may be stale/poisoned and that the current user instruction always wins. Prevents memory poisoning and prompt conflicts.
+- **📝 Turn-End Summarization (轮末自动摘要)** — `turn/end` events now produce a lightweight `summary` memory anchored on the last user message (new `summary` type + `turn-summary` tag, lower relevance so explicit facts stay prioritized).
+
+### 🧪 Tests
+
+- Added `test-temporal.js` (17 assertions): schema v2 columns, v1→v2 migration backfill, supersede soft-deprecation, valid-only recall, turn-summary extraction + FTS search. All existing tests still pass.
+
 ## v0.4.1 (2026-08-25)
 
 ### 🐛 Bug Fix
